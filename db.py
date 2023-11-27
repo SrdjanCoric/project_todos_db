@@ -29,7 +29,7 @@ class DatabasePersistence:
             list.setdefault('todos', todos)
             return list
 
-    def create_list(self, name):
+    def create_new_list(self, name):
         with self.connection.cursor() as cur:
             cur.execute("INSERT INTO lists (name) VALUES (%s)", (name,))
             self.connection.commit()
