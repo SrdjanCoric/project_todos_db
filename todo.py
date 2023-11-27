@@ -79,7 +79,7 @@ def update_list(id):
     error = error_for_list_name(name, g.storage.all_lists())
     if error:
         flash(error, "error")
-        return render_template('edit_list.html', list=list)
+        return render_template('edit_list.html', list=lst)
     g.storage.update_list_name(id, name)
     flash("The list has been updated.", "success")
     return redirect(url_for('show_lists'))
@@ -89,7 +89,7 @@ def edit_list(id):
     lst = g.storage.find_list(id)
     if lst is None:
         raise ListNotFoundError(f"The specified list with id {id} was not found.")
-    return render_template('edit_list.html', list=list)
+    return render_template('edit_list.html', list=lst)
 
 @app.route("/lists/<int:id>/delete", methods=["POST"])
 def delete_list(id):
@@ -100,7 +100,7 @@ def delete_list(id):
 @app.route("/lists/<int:list_id>/todos", methods=["POST"])
 def create_todo(list_id):
     todo_name = request.form["todo"].strip()
-    lst = g.storage.find_list(id)
+    lst = g.storage.find_list(list_id)
     if lst is None:
         raise ListNotFoundError(f"The specified list with id {id} was not found.")
 
