@@ -8,6 +8,7 @@ class DatabasePersistence:
             self.connection = psycopg2.connect(os.environ['DATABASE_URL'])
         else:
             self.connection = psycopg2.connect(dbname="todos")
+        self._setup_schema()
 
     def all_lists(self):
         with self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
@@ -31,3 +32,37 @@ class DatabasePersistence:
         with self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute("SELECT * FROM todos WHERE list_id = %s", (list_id,))
             return cur.fetchall()
+
+    def _setup_schema(self):
+        with self.connection.cursor() as cur:
+            cur.execute("""
+                SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = 'public' AND table_name = 'lists';
+            """)
+            if cur.fetchone()[0] == 0:
+                # Create 'lists' table
+                cur.execute("""
+                    CREATE TABLE lists (
+                        id serial PRIMARY KEY,
+                        name text NOT NULL UNIQUE
+    );
+                """)
+
+            cur.execute("""
+                SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = 'public' AND table_name = 'todos';
+            """)
+            if cur.fetchone()[0] == 0:
+                # Create 'todos' table
+                cur.execute("""
+                    CREATE TABLE todos (
+                        id serial PRIMARY KEY,
+                        name text NOT NULL,
+                        completed boolean NOT NULL DEFAULT false,
+                        list_id integer NOT NULL REFERENCES lists (id)
+                    );
+                """)
+
+            self.connection.commit()
