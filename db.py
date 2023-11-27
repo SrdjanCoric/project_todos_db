@@ -6,9 +6,10 @@ class DatabasePersistence:
     def __init__(self):
         if os.environ.get('FLASK_ENV') == 'production':
             self.connection = psycopg2.connect(os.environ['DATABASE_URL'])
+            self._setup_schema()
         else:
             self.connection = psycopg2.connect(dbname="todos")
-        self._setup_schema()
+            self._setup_schema()
 
     def all_lists(self):
         with self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
@@ -41,7 +42,6 @@ class DatabasePersistence:
                 WHERE table_schema = 'public' AND table_name = 'lists';
             """)
             if cur.fetchone()[0] == 0:
-                # Create 'lists' table
                 cur.execute("""
                     CREATE TABLE lists (
                         id serial PRIMARY KEY,
@@ -55,7 +55,6 @@ class DatabasePersistence:
                 WHERE table_schema = 'public' AND table_name = 'todos';
             """)
             if cur.fetchone()[0] == 0:
-                # Create 'todos' table
                 cur.execute("""
                     CREATE TABLE todos (
                         id serial PRIMARY KEY,
