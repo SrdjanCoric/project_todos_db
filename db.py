@@ -13,3 +13,10 @@ class DatabasePersistence:
             for item in lists:
                 item.setdefault('todos', [])
             return lists
+
+    def find_list(self, id):
+        with self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute("SELECT * FROM lists WHERE id = %s", (id,))
+            list = dict(cur.fetchone())
+            list.setdefault('todos', [])
+            return list

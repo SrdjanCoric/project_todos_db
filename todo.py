@@ -65,13 +65,17 @@ def add_list():
 
 @app.route("/lists/<int:id>", methods=["GET"])
 def show_list(id):
-    lst = load_list(id, g.storage)
+    lst = g.storage.find_list(id)
+    if lst is None:
+        raise ListNotFoundError(f"The specified list with id {id} was not found.")
     return render_template('list.html', list=lst, list_id=id)
 
 @app.route("/lists/<int:id>", methods=["POST"])
 def update_list(id):
     name = request.form["list_name"].strip()
-    list = load_list(id, g.storage)
+    lst = g.storage.find_list(id)
+    if lst is None:
+        raise ListNotFoundError(f"The specified list with id {id} was not found.")
     error = error_for_list_name(name, g.storage.all_lists())
     if error:
         flash(error, "error")
@@ -82,7 +86,9 @@ def update_list(id):
 
 @app.route("/lists/<int:id>/edit")
 def edit_list(id):
-    list = load_list(id, g.storage)
+    lst = g.storage.find_list(id)
+    if lst is None:
+        raise ListNotFoundError(f"The specified list with id {id} was not found.")
     return render_template('edit_list.html', list=list)
 
 @app.route("/lists/<int:id>/delete", methods=["POST"])
@@ -94,7 +100,9 @@ def delete_list(id):
 @app.route("/lists/<int:list_id>/todos", methods=["POST"])
 def create_todo(list_id):
     todo_name = request.form["todo"].strip()
-    list = load_list(list_id, g.storage)
+    lst = g.storage.find_list(id)
+    if lst is None:
+        raise ListNotFoundError(f"The specified list with id {id} was not found.")
 
     error = error_for_todo(todo_name)
     if error:
