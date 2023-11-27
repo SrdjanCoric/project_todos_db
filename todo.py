@@ -137,4 +137,4 @@ def mark_all_todos_completed(id):
     return redirect(url_for('show_list', id=id))
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5003)
+    app.run(debug=False)
