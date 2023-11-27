@@ -37,39 +37,16 @@ def sort_items(items, is_completed):
 
     return incomplete_items + complete_items
 
-def load_list(id, lists):
-    for lst in lists:
-        if lst['id'] == id:
-            return lst
-
-    raise ListNotFoundError(f"The specified list with id {id} was not found.")
+def load_list(id, storage):
+    lst = storage.find_list(id)
+    if lst is None:
+        raise ListNotFoundError(f"The specified list with id {id} was not found.")
+    return lst
 
 def find_todo_by_id(todos, id):
     for todo in todos:
         if todo['id'] == id:
             return todo
     return None
-    # incomplete_lists = []
-    # complete_lists = []
 
-    # for index, lst in enumerate(lists):
-    #     if is_list_completed(lst):
-    #         complete_lists.append((index, lst))
-    #     else:
-    #         incomplete_lists.append((index, lst))
-
-    # return incomplete_lists + complete_lists
-
-# def sort_lists(lists):
-
-#     incomplete_lists = [(index, lst) for index, lst in enumerate(lists) if not is_list_completed(lst)]
-#     complete_lists = [(index, lst) for index, lst in enumerate(lists) if is_list_completed(lst)]
-
-#     return incomplete_lists + complete_lists
-
-# def sort_todos(todos):
-#     incomplete_todos = [(index, todo) for index, todo in enumerate(todos) if not todo['completed']]
-#     complete_todos = [(index, todo) for index, todo in enumerate(todos) if todo['completed']]
-
-#     return incomplete_todos + complete_todos
 
