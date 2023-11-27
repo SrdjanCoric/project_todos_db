@@ -1,9 +1,13 @@
+import os
 import psycopg2
 import psycopg2.extras
 
 class DatabasePersistence:
     def __init__(self):
-        self.connection = psycopg2.connect(dbname="todos")
+        if os.environ.get('FLASK_ENV') == 'production':
+            self.connection = psycopg2.connect(os.environ['DATABASE_URL'])
+        else:
+            self.connection = psycopg2.connect(dbname="todos")
 
     def all_lists(self):
         with self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
