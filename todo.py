@@ -7,11 +7,8 @@ import secrets
 
 from utils import (
     error_for_list_name, error_for_todo, list_class, is_list_completed,
-    todos_remaining_count, todos_count, sort_items, is_todo_completed,
-    load_list, find_todo_by_id
+    todos_remaining_count, todos_count, sort_items, is_todo_completed
 )
-
-from storage import SessionPersistence
 
 from db import DatabasePersistence
 
