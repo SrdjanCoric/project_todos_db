@@ -52,6 +52,3 @@ class SessionPersistence:
             for todo in list['todos']:
                 todo['completed'] = True
             self.session.modified = True
-
-    def _next_element_id(self, elements):
-        return max([element['id'] for element in elements], default=0) + 1

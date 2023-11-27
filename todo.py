@@ -13,6 +13,8 @@ from utils import (
 
 from storage import SessionPersistence
 
+from db import DatabasePersistence
+
 from exceptions import ListNotFoundError
 
 app = Flask(__name__)
@@ -33,8 +35,8 @@ def handle_list_not_found_error(error):
     return redirect(url_for('show_lists'))
 
 @app.before_request
-def load_storage():
-    g.storage = SessionPersistence(session)
+def load_db():
+    g.storage = DatabasePersistence()
 
 @app.route("/")
 def index():
@@ -43,6 +45,7 @@ def index():
 @app.route("/lists", methods=["GET"])
 def show_lists():
     lists = g.storage.all_lists()
+    print(lists)
     return render_template('lists.html', lists=lists)
 
 @app.route("/lists", methods=["POST"])
