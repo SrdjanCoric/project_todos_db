@@ -29,7 +29,7 @@ class DatabasePersistence:
             list.setdefault('todos', todos)
             return list
 
-    def create_new_list(self, name):
+    def create_list(self, name):
         with self.connection.cursor() as cur:
             cur.execute("INSERT INTO lists (name) VALUES (%s)", (name,))
             self.connection.commit()
@@ -69,35 +69,3 @@ class DatabasePersistence:
         with self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute("SELECT * FROM todos WHERE list_id = %s", (id,))
             return cur.fetchall()
-
-    def _setup_schema(self):
-        with self.connection.cursor() as cur:
-            cur.execute("""
-                SELECT COUNT(*)
-                FROM information_schema.tables
-                WHERE table_schema = 'public' AND table_name = 'lists';
-            """)
-            if cur.fetchone()[0] == 0:
-                cur.execute("""
-                    CREATE TABLE lists (
-                        id serial PRIMARY KEY,
-                        name text NOT NULL UNIQUE
-    );
-                """)
-
-            cur.execute("""
-                SELECT COUNT(*)
-                FROM information_schema.tables
-                WHERE table_schema = 'public' AND table_name = 'todos';
-            """)
-            if cur.fetchone()[0] == 0:
-                cur.execute("""
-                    CREATE TABLE todos (
-                        id serial PRIMARY KEY,
-                        name text NOT NULL,
-                        completed boolean NOT NULL DEFAULT false,
-                        list_id integer NOT NULL REFERENCES lists (id)
-                    );
-                """)
-
-            self.connection.commit()

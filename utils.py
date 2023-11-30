@@ -37,11 +37,6 @@ def sort_items(items, is_completed):
 
     return incomplete_items + complete_items
 
-def load_list(id, storage):
-    lst = storage.find_list(id)
-    if lst is None:
-        raise ListNotFoundError(f"The specified list with id {id} was not found.")
-    return lst
 
 def find_todo_by_id(todos, id):
     for todo in todos:
